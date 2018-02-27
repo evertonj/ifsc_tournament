@@ -197,10 +197,14 @@ function init() {
                 controlsEnabled = true;
                 controls.enabled = true;
                 blocker.style.display = 'none';
+                var shooterImg = document.getElementById('shooterImg');
+                shooterImg.style.visibility = 'visible';
             } else {
                 controls.enabled = false;
                 blocker.style.display = 'block';
                 instructions.style.display = '';
+                var shooterImg = document.getElementById('shooterImg');
+                shooterImg.style.visibility = 'hidden';
             }
         };
         var pointerlockerror = function (event) {
@@ -219,6 +223,7 @@ function init() {
             element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
             element.requestPointerLock();
         }, false);
+
     } else {
         instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
     }
@@ -1013,7 +1018,7 @@ function mouseClick(event) {
         //   return true;
         // }
         //}
-        event.preventDefault();
+        //event.preventDefault();
 
     }
 
@@ -1095,12 +1100,6 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    var rifle = document.getElementById("shooterImg");
-    rifle.style.marginLeft = (window.innerWidth * 0.23) + "px";
-    rifle.style.marginRight = (window.innerWidth * 0.27) + "px";
-    rifle.style.marginTop = (window.innerHeight * 0.3466) + "px";
-    rifle.style.width = (window.innerWidth * 0.5) + "px";
-    rifle.style.height = (window.innerHeight * 0.6534) + "px";
 }
 
 
