@@ -1,9 +1,5 @@
 var blocker = document.getElementById('blocker');
 var instructions = document.getElementById('instructions');
-var shotGun = null;
-
-// Meshes index
-var meshes = {};
 
 // Bullets array
 var bullets = [];
@@ -14,11 +10,6 @@ var killerList = [];
 var scene, camera, renderer, mesh, clock;
 var meshFloor, ambientLight, light;
 
-var crate, crateTexture, crateNormalMap, crateBumpMap;
-
-var keyboard = {};
-var player = {height: 1.8, speed: 0.2, turnSpeed: Math.PI * 0.02, canShoot: 0};
-var USE_WIREFRAME = false;
 
 var loadingScreen = {
     scene: new THREE.Scene(),
@@ -30,50 +21,6 @@ var loadingScreen = {
 };
 var loadingManager = null;
 var RESOURCES_LOADED = false;
-
-// Models index
-var models = {
-    uzi: {
-        obj: "models/uziGold.obj",
-        mtl: "models/uziGold.mtl",
-        mesh: null,
-        castShadow: false
-    }
-};
-
-
-//Gera Predio
-function gerarPredio(x, z, material, largura, comprimento, altura, y) {
-    var boxGeometria = new THREE.BoxGeometry(largura, altura, comprimento);
-    var box = new THREE.Mesh(boxGeometria, material);
-    box.position.x = x;
-    if (y == 0) {
-        box.position.y = altura / 2;
-    } else {
-        box.position.y = y;
-    }
-
-    box.position.z = z;
-    box.castShadow = true;
-    box.receiveShadow = true;
-    return box;
-}
-
-function gerarPredioT(x, z, material, largura, comprimento, altura, y) {
-    var box = new THREE.Mesh(
-        new THREE.BoxGeometry(largura, altura, comprimento), material);
-    box.position.x = x;
-    if (y == 0) {
-        box.position.y = altura / 2;
-    } else {
-        box.position.y = y;
-    }
-
-    box.position.z = z;
-    box.castShadow = true;
-    box.receiveShadow = true;
-    return box;
-}
 
 //################################################# Claidson
 //peaos
@@ -99,7 +46,7 @@ var torto = 'bots/emilinguido.png';
 var marromA = 'bots/marron.png';
 var brancoA = 'bots/branco.png';
 var neginA = 'bots/negin.png';
-var passaroA = 'bots/pass.gif';
+var renasA = 'bots/renas.png';
 
 // gera malandro
 function geraProfessor(posX, posZ, figura) {
@@ -140,9 +87,9 @@ var torto1 = geraProfessor(-40, -55, torto);
 var marron1 = geraProfessor(20, -10, marromA);
 var branco1 = geraProfessor(-15, -12, brancoA);
 var negin1 = geraProfessor(36, -56, neginA);
-var passaro = geraProfessor(-5, -10, passaroA);
+var renas1 = geraProfessor(-38, -45, renasA);
 var arrayProfessor = [];
-arrayProfessor.push(perin1, perin2, perin3, perin4, robson1, robson2, robson3, robson4, vilson1, wilson1, winson2, vilson2, ed1, ed2, ed3, alemao1, torto1, marron1, branco1, negin1, alemao2);
+arrayProfessor.push(renas1, perin1, perin2, perin3, perin4, robson1, robson2, robson3, robson4, vilson1, wilson1, winson2, vilson2, ed1, ed2, ed3, alemao1, torto1, marron1, branco1, negin1, alemao2);
 
 
 function adicionaElementos() {
@@ -168,25 +115,10 @@ function init() {
 
     loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function (item, loaded, total) {
-        // console.log(item, loaded, total);
     };
     loadingManager.onLoad = function () {
-        // console.log("loaded all resources");
         RESOURCES_LOADED = true;
-        //onResourcesLoaded();
     };
-
-
-    // mesh = new THREE.Mesh(
-    //     new THREE.BoxGeometry(1, 1, 1),
-    //     new THREE.MeshPhongMaterial({color: 0xff4444, wireframe: USE_WIREFRAME})
-    // );
-    // mesh.position.y += 1;
-    // mesh.receiveShadow = true;
-    // mesh.castShadow = true;
-    // scene.add(mesh);
-    // renderer = new THREE.WebGLRenderer({antialias: true});
-
 
 //http://www.html5rocks.com/en/tutorials/pointerlock/intro/
     var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
@@ -229,13 +161,8 @@ function init() {
     }
 
 
-    // var map = new THREE.TextureLoader().load( "shooter.png" );
-    // var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: true } );
-    // shooter = new THREE.Sprite( material );
-    // scene.add( sprite );
-
     controls = new THREE.PointerLockControls(camera);
-    controls.getObject().position.set(0, 1, 95);
+    controls.getObject().position.set(0, 1, 0);
 
     scene.add(controls.getObject());
     var onKeyDown = function (event) {
@@ -313,7 +240,6 @@ function init() {
     meshFloor.receiveShadow = true;
 
     scene.add(meshFloor);
-    //objects.push(meshFloor);
 
     ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
     scene.add(ambientLight);
@@ -342,15 +268,6 @@ function init() {
             normalMap: crateNormalMap
         })
     );
-
-
-    var loaderShotGun = new THREE.ObjectLoader();
-    loaderShotGun.load('shotgun.json', function (obj) {
-        console.debug(obj);
-        shotGun = obj.scale.set(10, 10, 10);
-        scene.add(obj);
-    });
-
 
     //Fernando
     //Gera Predio
@@ -400,18 +317,11 @@ function init() {
     }
 
     //Texturas
-    var textura_parede_branca = new THREE.MeshLambertMaterial({
-        map: THREE.ImageUtils.loadTexture('texturas/parede_branca.png')
-    });
-    var textura_parede_verde = new THREE.MeshLambertMaterial({
-        map: THREE.ImageUtils.loadTexture('texturas/parede_verde.png')
-    });
     var textura_branca = new THREE.MeshPhongMaterial({color: 0xffffff});
     var textura_verde = new THREE.MeshPhongMaterial({color: 0x22aa22});
 
 
 //Gera o material com textura em cada face
-
     var cenario = [
 
         createMaterial('texturas/mundo_direita.png', 1, 1),// esquerda
@@ -757,9 +667,9 @@ function init() {
     objects.push(parede2);
     objects.push(parede3);
     objects.push(parede4);
-    //objects.push(parede5);
+    objects.push(parede5);
     objects.push(parede6);
-    // objects.push(parede7);
+    objects.push(parede7);
     objects.push(parede8);
     objects.push(parede9);
     objects.push(parede10);
@@ -771,7 +681,7 @@ function init() {
     objects.push(parede16);
     objects.push(parede17);
     objects.push(parede18);
-    // objects.push(parede19);
+    objects.push(parede19);
     objects.push(parede20);
     objects.push(parede21);
     objects.push(parede22);
@@ -780,432 +690,133 @@ function init() {
     objects.push(parede26);
 
     adicionaElementos();
-
-    // Load models
-    // REMEMBER: Loading in Javascript is asynchronous, so you need
-    // to wrap the code in a function and pass it the index. If you
-    // don't, then the index '_key' can change while the model is being
-    // downloaded, and so the wrong model will be matched with the wrong
-    // index key.
-    for (var _key in models) {
-        (function (key) {
-
-            var mtlLoader = new THREE.MTLLoader(loadingManager);
-            mtlLoader.load(models[key].mtl, function (materials) {
-                materials.preload();
-
-                var objLoader = new THREE.OBJLoader(loadingManager);
-
-                objLoader.setMaterials(materials);
-                objLoader.load(models[key].obj, function (mesh) {
-
-                    mesh.traverse(function (node) {
-                        if (node instanceof THREE.Mesh) {
-                            if ('castShadow' in models[key])
-                                node.castShadow = models[key].castShadow;
-                            else
-                                node.castShadow = true;
-
-                            if ('receiveShadow' in models[key])
-                                node.receiveShadow = models[key].receiveShadow;
-                            else
-                                node.receiveShadow = true;
-                        }
-                    });
-                    models[key].mesh = mesh;
-
-                });
-            });
-
-        })(_key);
-    }
-
-
-    // camera.position.set(0, player.height, -95);
-    // camera.lookAt(new THREE.Vector3(0, player.height, 0));
-    //
-    // renderer = new THREE.WebGLRenderer();
-    // renderer.setSize(window.innerWidth, window.innerHeight);
-    //
-    // renderer.shadowMap.enabled = true;
-    // renderer.shadowMap.type = THREE.BasicShadowMap;
-    //
-    // document.body.appendChild(renderer.domElement);
-    //
-    // controls = new THREE.PointerLockControls(camera);
-
-
 }
 
-
-// // Runs when all resources are loaded
-// function onResourcesLoaded() {
-//
-//     // player weapon
-//     meshes["playerweapon"] = models.uzi.mesh.clone();
-//     meshes["playerweapon"].position.set(0, 0.8, 93);
-//     meshes["playerweapon"].scale.set(20, 20, 20);
-//     meshes["playerweapon"].rotation.y = Math.PI;
-//     scene.add(meshes["playerweapon"]);
-//     //objects.push(meshes["playerweapon"]);
-// }
+    var controlsEnabled = false;
+    var moveForward = false;
+    var moveBackward = false;
+    var moveLeft = false;
+    var moveRight = false;
+    var canJump = false;
+    var prevTime = performance.now();
+    var velocity = new THREE.Vector3();
+    var direction = new THREE.Vector3();
 
 
-var controlsEnabled = false;
-var moveForward = false;
-var moveBackward = false;
-var moveLeft = false;
-var moveRight = false;
-var canJump = false;
-var prevTime = performance.now();
-var velocity = new THREE.Vector3();
-var direction = new THREE.Vector3();
+    function mouseClick(event) {
 
+        if (controls.getObject().position != null) {
+            event.preventDefault();
+            // creates a bullet as a Mesh object
+            bullet = new THREE.Mesh(
+                new THREE.SphereGeometry(0.1, 50, 50),
+                new THREE.MeshBasicMaterial({color: 0x6eff00})
+            );
 
-// function animate() {
-//
-//     // Play the loading screen until resources are loaded.
-//
-//
-//
-//     //gera as bolas
-//     // for (var index = 0; index < bullets.length; index += 1) {
-//     //     if (bullets[index] === undefined) continue;
-//     //     if (bullets[index].alive == false) {
-//     //         bullets.splice(index, 1);
-//     //         continue;
-//     //     }
-//
-//
-//     //  killTeacher(bullets[index]);
-//     // console.log(bullets[index].position.add(bullets[index].velocity));
-// // }
-//
-//     var time = Date.now() * 0.0005;
-//
-//     var ax = camera.position.x;
-//     var az = camera.position.z;
-//     ay = camera.position.y;
-//
-//
-//     if (keyboard[87]) { // W key
-//         ax -= Math.sin(camera.rotation.y) * player.speed;
-//         az -= -Math.cos(camera.rotation.y) * player.speed;
-//     }
-//     if (keyboard[83]) { // S key
-//         ax += Math.sin(camera.rotation.y) * player.speed;
-//         az += -Math.cos(camera.rotation.y) * player.speed;
-//     }
-//     if (keyboard[65]) { // A key
-//         ax += Math.sin(camera.rotation.y + Math.PI / 2) * player.speed;
-//         az += -Math.cos(camera.rotation.y + Math.PI / 2) * player.speed;
-//     }
-//     if (keyboard[68]) { // D key
-//         ax += Math.sin(camera.rotation.y - Math.PI / 2) * player.speed;
-//         az += -Math.cos(camera.rotation.y - Math.PI / 2) * player.speed;
-//     }
-//
-//     if (permitirMovimento(ax, ay, az)) {
-//         camera.position.x = ax;
-//         camera.position.y = ay;
-//         camera.position.z = az;
-//     }
-//
-//     if (camera.position.y > 1) {
-//         camera.position.y -= 0.2;
-//     }
-//
-//
-// // Voar
-//     if (keyboard[32] && player.canShoot <= 0) { // spacebar key
-//         camera.position.y += 0.8;
-//     }
-//
-//
-//     if (player.canShoot > 0) player.canShoot -= 1;
-//
-// // position the gun in front of the camera
-//     meshes["playerweapon"].position.set(
-//         camera.position.x - Math.sin(camera.rotation.y + Math.PI / 6) * 0.75,
-//         camera.position.y - 0.5 + Math.sin(time * 4 + camera.position.x + camera.position.z) * 0.01,
-//         camera.position.z + Math.cos(camera.rotation.y + Math.PI / 6) * 0.75
-//     );
-//     meshes["playerweapon"].rotation.set(
-//         camera.rotation.x,
-//         camera.rotation.y - Math.PI,
-//         camera.rotation.z
-//     );
-//
-//     killTeacher();
-//
-//     renderer.render(scene, camera);
-// }
+            // position the bullet to come from the player's weapon
+            bullet.position.set(
+                controls.getObject().position.x,
+                controls.getObject().position.y + 1.0,
+                controls.getObject().position.z
+            );
+            // set the velocity of the bullet
+            bullet.velocity = new THREE.Vector3(
+                -Math.sin(controls.getObject().rotation.y) * 2.0,
+                0,
+                -Math.cos(controls.getObject().rotation.y) * 2.0
+            );
 
-// var bullet;
+            bullet.velocity = controls.getDirection(bullet.velocity);
 
-function mouseClick(event) {
+            bullet.alive = true;
+            setTimeout(function () {
+                bullet.alive = false;
+                scene.remove(bullet);
+            }, 15000);
 
-    if (controls.getObject().position != null) {
-        // creates a bullet as a Mesh object
-        bullet = new THREE.Mesh(
-            new THREE.SphereGeometry(0.1, 50, 50),
-            new THREE.MeshBasicMaterial({color: 0xffffff})
-        );
+            // add to scene, array, and set the delay to 10 frames
+            bullets.push(bullet);
+            scene.add(bullet);
 
-        // position the bullet to come from the player's weapon
-        bullet.position.set(
-            controls.getObject().position.x,
-            controls.getObject().position.y + 1.0,
-            controls.getObject().position.z
-        );
-        // set the velocity of the bullet
-        bullet.velocity = new THREE.Vector3(
-            -Math.sin(controls.getObject().rotation.y) * 2.0,
-            0,
-            -Math.cos(controls.getObject().rotation.y) * 2.0
-        );
-
-        bullet.velocity = controls.getDirection(bullet.velocity);
-
-        // after 1000ms, set alive to false and remove from scene
-        // setting alive to false flags our update code to remove
-        // the bullet from the bullets array
-        bullet.alive = true;
-        setTimeout(function () {
-            bullet.alive = false;
-            scene.remove(bullet);
-        }, 15000);
-
-        // add to scene, array, and set the delay to 10 frames
-        bullets.push(bullet);
-        scene.add(bullet);
-
-        // for (var x = 0; x < bullets.length; x++) {
-        //     if (bullets[x] === undefined) continue;
-        //     if (bullets[x].alive == false) {
-        //         bullets.splice(x, 1);
-        //         continue;
-        //     }
-        // var aux = bullets[x].velocity;
-        // var demo = new THREE.Raycaster(bullets[x].position, aux, 0, 1.5);
-        //
-        // // console.log(killerList);
-        // // console.log(bullets[x].position);
-        //
-        // aux2.x = aux.x - bullets[x].position.x;
-        // aux2.y = aux.y - bullets[x].position.y;
-        // aux2.z = aux.z - bullets[x].position.z;
-        //
-        // demo.set(bullets[x].position, aux);
-        //
-        // var intersectElements = demo.intersectObjects(killerList, true);
-        // if (intersectElements.length != 0) {
-        //
-        //     bullets[x].position.add(bullets[x].velocity);
-        //     console.log("matou o diabo");
-        //     console.log(intersectElements[0]);
-        //     for (var k = 0; k < intersectElements.length; k++) {
-        //         scene.remove(intersectElements[k].object);
-        //     }
-        //     bullets[x].alive = false;
-        //     scene.remove(bullets[x]);
-        //
-        //
-        //     // return false;
-        // } else {
-        //bullets[x].position.add(bullets[x].velocity);
-        // console.log("else");
-        //   return true;
-        // }
-        //}
-        //event.preventDefault();
-
-    }
-
-
-}
-
-// var initx = window.innerWidth / 2;
-// var inity = window.innerHeight / 2;
-
-// var testeMouseMove = true;
-// var value1 = window.innerHeight / 2;
-// var value2 = window.innerHeight / 2;
-
-// function mouseMove(event) {
-// console.log("xxxx" + event.clientX);
-// console.log("yyyy" + event.clientY);
-
-
-// if (event.clientY == inity && event.clientX != initx) {
-//     if (event.clientX > initx) {
-//         ay = camera.rotation.y + (Math.PI / 360) * 10.0;
-//         event.preventDefault();
-//     }
-//     if (event.clientX < initx) {
-//         ay = camera.rotation.y - (Math.PI / 360) * 10.0;
-//         event.preventDefault();
-//     }
-//     if (permitirMoveCam(dir.x, ay, dir.z)) {
-//         camera.rotation.y = ay;
-//     }
-// }
-//
-//
-// initx = event.clientX;
-// inity = event.clientY;
-
-
-//     value2 = value1;
-//     value1 = event.clientY;
-//
-//     console.debug("Atual: " + value1 + ", Anterior: " + value2 + ", Diferenca: " + (value1 - value2));
-// }
-
-// function permitirMovimento(ax, ay, az) {
-//
-//     var raycaster = new THREE.Raycaster(camera.position, new THREE.Vector3(ax, ay, az), 0, 1.5);
-//     dir.x = (ax - camera.position.x);
-//     dir.y = (ay - camera.position.y);
-//     dir.z = (az - camera.position.z);
-//
-//
-//     raycaster.set(camera.position, dir);
-//
-//     var intersectParede = raycaster.intersectObjects(objects, true);
-//     if (intersectParede.length != 0) {
-//         console.log("bateu na parede");
-//         console.log(intersectParede[0]);
-//         return false;
-//     } else {
-//
-//         return true;
-//     }
-// }
-
-//model
-// var loaderShotGun = new THREE.JSONLoader();
-// loaderShotGun.load('shotgun.json', shotgun_load);
-//
-// function shotgun_load(geometry, materials) {
-//     var material = new THREE.MeshNormalMaterial();
-//     var mesh = new THREE.Mesh(geometry, material);
-//     scene.add(mesh);
-//     mesh.position.set(0,0,0);
-//     mesh.scale.set(100,100,100);
-// }
-
-
-function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-
-function killTeacher() {
-    for (var x = 0; x < bullets.length; x++) {
-        if (bullets[x] === undefined) continue;
-        if (bullets[x].alive == false) {
-            bullets.splice(x, 1);
-            continue;
         }
+    }
 
-        var demo = new THREE.Raycaster(bullets[x].position, controls.getObject().position, 0, 1);
 
-        var intersectElements = demo.intersectObjects(killerList, true);
-        if (intersectElements.length != 0) {
-            bullets[x].position.add(bullets[x].velocity);
-            console.log("matou o diabo");
-            console.log(intersectElements[0]);
-            for (var k = 0; k < intersectElements.length; k++) {
-                scene.remove(intersectElements[k].object);
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+
+    function killTeacher() {
+        for (var x = 0; x < bullets.length; x++) {
+            if (bullets[x] === undefined) continue;
+            if (bullets[x].alive == false) {
+                bullets.splice(x, 1);
+                continue;
             }
-            bullets[x].alive = false;
-            scene.remove(bullets[x]);
-        } else {
-            bullets[x].position.add(bullets[x].velocity);
-            console.log("else");
+
+            var demo = new THREE.Raycaster(bullets[x].position, controls.getObject().position, 0, 1);
+
+            var intersectElements = demo.intersectObjects(killerList, true);
+            if (intersectElements.length != 0) {
+                bullets[x].position.add(bullets[x].velocity);
+                console.log(intersectElements[0]);
+                for (var k = 0; k < intersectElements.length; k++) {
+                    scene.remove(intersectElements[k].object);
+                }
+                bullets[x].alive = false;
+                scene.remove(bullets[x]);
+            } else {
+                bullets[x].position.add(bullets[x].velocity);
+            }
         }
     }
-}
+
+    init();
+    animate();
 
 
-// function permitirMoveCam(ax, ay, az) {
-//     var dir = new THREE.Vector3();
-//     var move = new THREE.Raycaster(camera.position, new THREE.Vector3(ax, ay, az), 0, 1.5);
-//     dir.x = (ax - camera.position.x);
-//     dir.y = (ay - camera.position.y);
-//     dir.z = (az - camera.position.z);
-//
-//
-//     move.set(camera.position, dir);
-//
-//     var intersectParede = move.intersectObjects(objects, true);
-//     if (intersectParede.length != 0) {
-//         console.log("bateu");
-//         console.log(intersectParede[0]);
-//         return false;
-//     } else {
-//         return true;
-//     }
-// }
-
-init();
-animate();
+    function animate() {
+        requestAnimationFrame(animate);
 
 
-function animate() {
-    requestAnimationFrame(animate);
+        if (controlsEnabled === true) {
+            raycaster.ray.origin.copy(controls.getObject().position);
+            raycaster.ray.origin.y -= 1;
+            var intersections = raycaster.intersectObjects(objects);
+            var onObject = intersections.length > 0;
+            var time = performance.now();
+            var delta = (time - prevTime) / 1000;
 
 
-    if (controlsEnabled === true) {
-        raycaster.ray.origin.copy(controls.getObject().position);
-        raycaster.ray.origin.y -= 1;
-        var intersections = raycaster.intersectObjects(objects);
-        var onObject = intersections.length > 0;
-        var time = performance.now();
-        var delta = (time - prevTime) / 1000;
-        velocity.x -= velocity.x * 10.0 * delta;
-        velocity.z -= velocity.z * 10.0 * delta;
-        velocity.y -= 9.8 * 14.28 * delta; // 100.0 = mass
-        direction.z = Number(moveForward) - Number(moveBackward);
-        direction.x = Number(moveLeft) - Number(moveRight);
-        direction.normalize(); // this ensures consistent movements in all directions
-        if (moveForward || moveBackward) velocity.z -= direction.z * 400.0 * delta;
-        if (moveLeft || moveRight) velocity.x -= direction.x * 400.0 * delta;
-        if (onObject === true) {
-            velocity.y = Math.max(0, velocity.y);
-            canJump = true;
+            if (onObject === true) {
+                velocity.y = Math.max(0, velocity.y);
+                canJump = true;
+            } else {
+                velocity.x -= velocity.x * 10.0 * delta;
+                velocity.z -= velocity.z * 10.0 * delta;
+                velocity.y -= 9.8 * 14.28 * delta; // 100.0 = mass
+                direction.z = Number(moveForward) - Number(moveBackward);
+                direction.x = Number(moveLeft) - Number(moveRight);
+                direction.normalize(); // this ensures consistent movements in all directions
+                if (moveForward || moveBackward) velocity.z -= direction.z * 400.0 * delta;
+                if (moveLeft || moveRight) velocity.x -= direction.x * 400.0 * delta;
+            }
+            controls.getObject().translateX(velocity.x * delta);
+            controls.getObject().translateY(velocity.y * delta);
+            controls.getObject().translateZ(velocity.z * delta);
+            if (controls.getObject().position.y < 1) {
+                velocity.y = 0;
+                controls.getObject().position.y = 1;
+                canJump = true;
+            }
+            prevTime = time;
+
+            killTeacher();
         }
-        controls.getObject().translateX(velocity.x * delta);
-        controls.getObject().translateY(velocity.y * delta);
-        controls.getObject().translateZ(velocity.z * delta);
-        if (controls.getObject().position.y < 1) {
-            velocity.y = 0;
-            controls.getObject().position.y = 1;
-            canJump = true;
-        }
-        prevTime = time;
-
-        killTeacher();
+        renderer.render(scene, camera);
     }
-    renderer.render(scene, camera);
-}
 
-
-// function keyDown(event) {
-//     keyboard[event.keyCode] = true;
-// }
-//
-// function keyUp(event) {
-//     keyboard[event.keyCode] = false;
-// }
-//
-// window.addEventListener('keydown', keyDown);
-// window.addEventListener('keyup', keyUp);
-//window.addEventListener('mousemove', mouseMove);
-document.addEventListener('mousedown', mouseClick, false);
-//
-//
-// window.onload = init;
+    document.addEventListener('mousedown', mouseClick, false);
