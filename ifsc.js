@@ -213,7 +213,7 @@ function init() {
     };
     document.addEventListener('keydown', onKeyDown, false);
     document.addEventListener('keyup', onKeyUp, false);
-    raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 10);
+    raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, 1, 0), 0, 1);
 
     //
     renderer = new THREE.WebGLRenderer();
@@ -243,7 +243,7 @@ function init() {
 
     ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
     scene.add(ambientLight);
-    objects.push(ambientLight);
+    //objects.push(ambientLight);
 
     light = new THREE.PointLight(0xffffff, 0.8, 18);
     light.position.set(25, 300, 95);
@@ -252,22 +252,7 @@ function init() {
     light.shadow.camera.far = 25;
 
     scene.add(light);
-    objects.push(light);
-
-    var textureLoader = new THREE.TextureLoader(loadingManager);
-    crateTexture = textureLoader.load("crate0/crate0_diffuse.jpg");
-    crateBumpMap = textureLoader.load("crate0/crate0_bump.jpg");
-    crateNormalMap = textureLoader.load("crate0/crate0_normal.jpg");
-
-    crate = new THREE.Mesh(
-        new THREE.BoxGeometry(3, 3, 3),
-        new THREE.MeshPhongMaterial({
-            color: 0xffffff,
-            map: crateTexture,
-            bumpMap: crateBumpMap,
-            normalMap: crateNormalMap
-        })
-    );
+    //objects.push(light);
 
     //Fernando
     //Gera Predio
@@ -472,6 +457,23 @@ function init() {
         createMaterial('texturas/parede_verde.png', 1, 1) // frente
 
     ];
+
+    var blocoTeste = [
+
+        createMaterial('texturas/parede_verde.png', 1, 1),// esquerda
+
+        createMaterial('texturas/parede_verde.png', 1, 1),// direita
+
+        textura_branca,// cima
+
+        createMaterial('texturas/parede_branca.png', 5, 5), // baixo
+
+        createMaterial('texturas/parede_verde.png', 1, 1), // fundos
+
+        createMaterial('texturas/parede_verde.png', 1, 1) // frente
+
+    ];
+
     var bloco8 = [
 
         textura_branca,// esquerda
@@ -564,11 +566,6 @@ function init() {
     ];
 
 
-    var texturaPredio2 = new THREE.MeshLambertMaterial({
-        map: THREE.ImageUtils.loadTexture('texturas/parede_ifsc_2.png')
-    });
-    texturaPredio2.map.wrapS = texturaPredio2.map.wrapT = THREE.RepeatWrapping;
-    texturaPredio2.map.repeat.set(5, 1);
     //cenario
     var mundo = gerarPredio(0, 0, cenario, 300, 300, 100, 49);
     mundo.scale.set(-1, 1, 1);
@@ -587,10 +584,10 @@ function init() {
     var parede8 = gerarPredio(67, -14, bloco4, 30, 6, 12, 0);
     var parede9 = gerarPredio(67, -47, bloco2, 35, 60, 12, 0);
     var parede10 = gerarPredio(67, -47, bloco2_mid, 40, 12, 12, 0);
-    var parede11 = gerarPredioCorUnica(-68, 14.2, textura_branca, 20, 10, 7, 0);
-    var parede12 = gerarPredioCorUnica(-68, 24.2, textura_branca, 20, 10, 7, 0);
-    var parede13 = gerarPredioCorUnica(-54.5, 36.7, textura_branca, 7, 15, 7, 0);
-    var parede14 = gerarPredioCorUnica(72, 58.5, textura_branca, 30, 30, 7, 0);
+    //var parede11 = gerarPredioCorUnica(-68, 14.2, textura_branca, 20, 10, 7, 0);
+    //var parede12 = gerarPredioCorUnica(-68, 24.2, textura_branca, 20, 10, 7, 0);
+    //var parede13 = gerarPredioCorUnica(-54.5, 36.7, textura_branca, 7, 15, 7, 0);
+    var parede14 = gerarPredio(72, 58.5, blocoTeste, 30, 30, 7, 0);
     //Marquise
     var parede15 = gerarPredioCorUnica(-3, 13, textura_verde, 63, 38, 3, 13.5);
     var parede16 = gerarPredioCorUnica(-3, 13, textura_verde, 15, 43, 3, 13.5);
@@ -617,9 +614,9 @@ function init() {
     parede8.name = "parede8";
     parede9.name = "parede9";
     parede10.name = "parede10";
-    parede11.name = "parede11";
-    parede12.name = "parede12";
-    parede13.name = "parede13";
+    //parede11.name = "parede11";
+    //parede12.name = "parede12";
+    //parede13.name = "parede13";
     parede14.name = "parede14";
     parede15.name = "parede15";
     parede16.name = "parede16";
@@ -645,9 +642,9 @@ function init() {
     scene.add(parede8);
     scene.add(parede9);
     scene.add(parede10);
-    scene.add(parede11);
-    scene.add(parede12);
-    scene.add(parede13);
+    //scene.add(parede11);
+    //scene.add(parede12);
+    //scene.add(parede13);
     scene.add(parede14);
     scene.add(parede15);
     scene.add(parede16);
@@ -673,9 +670,9 @@ function init() {
     objects.push(parede8);
     objects.push(parede9);
     objects.push(parede10);
-    objects.push(parede11);
-    objects.push(parede12);
-    objects.push(parede13);
+    //objects.push(parede11);
+    //objects.push(parede12);
+    //objects.push(parede13);
     objects.push(parede14);
     objects.push(parede15);
     objects.push(parede16);
@@ -685,6 +682,7 @@ function init() {
     objects.push(parede20);
     objects.push(parede21);
     objects.push(parede22);
+    objects.push(parede23);
     objects.push(parede24);
     objects.push(parede25);
     objects.push(parede26);
@@ -692,100 +690,102 @@ function init() {
     adicionaElementos();
 }
 
-    var controlsEnabled = false;
-    var moveForward = false;
-    var moveBackward = false;
-    var moveLeft = false;
-    var moveRight = false;
-    var canJump = false;
-    var prevTime = performance.now();
-    var velocity = new THREE.Vector3();
-    var direction = new THREE.Vector3();
+var controlsEnabled = false;
+var moveForward = false;
+var moveBackward = false;
+var moveLeft = false;
+var moveRight = false;
+var canJump = false;
+var prevTime = performance.now();
+var velocity = new THREE.Vector3();
+var direction = new THREE.Vector3();
 
 
-    function mouseClick(event) {
+function mouseClick(event) {
 
-        if (controls.getObject().position != null) {
-            event.preventDefault();
-            // creates a bullet as a Mesh object
-            bullet = new THREE.Mesh(
-                new THREE.SphereGeometry(0.1, 50, 50),
-                new THREE.MeshBasicMaterial({color: 0x6eff00})
-            );
+    if (controls.getObject().position != null) {
+        event.preventDefault();
+        // creates a bullet as a Mesh object
+        bullet = new THREE.Mesh(
+            new THREE.SphereGeometry(0.1, 50, 50),
+            new THREE.MeshBasicMaterial({color: 0x6eff00})
+        );
 
-            // position the bullet to come from the player's weapon
-            bullet.position.set(
-                controls.getObject().position.x,
-                controls.getObject().position.y + 1.0,
-                controls.getObject().position.z
-            );
-            // set the velocity of the bullet
-            bullet.velocity = new THREE.Vector3(
-                -Math.sin(controls.getObject().rotation.y) * 2.0,
-                0,
-                -Math.cos(controls.getObject().rotation.y) * 2.0
-            );
+        // position the bullet to come from the player's weapon
+        bullet.position.set(
+            controls.getObject().position.x,
+            controls.getObject().position.y + 1.0,
+            controls.getObject().position.z
+        );
+        // set the velocity of the bullet
+        bullet.velocity = new THREE.Vector3(
+            -Math.sin(controls.getObject().rotation.y) * 2.0,
+            0,
+            -Math.cos(controls.getObject().rotation.y) * 2.0
+        );
 
-            bullet.velocity = controls.getDirection(bullet.velocity);
+        bullet.velocity = controls.getDirection(bullet.velocity);
 
-            bullet.alive = true;
-            setTimeout(function () {
-                bullet.alive = false;
-                scene.remove(bullet);
-            }, 15000);
+        bullet.alive = true;
+        setTimeout(function () {
+            bullet.alive = false;
+            scene.remove(bullet);
+        }, 15000);
 
-            // add to scene, array, and set the delay to 10 frames
-            bullets.push(bullet);
-            scene.add(bullet);
+        // add to scene, array, and set the delay to 10 frames
+        bullets.push(bullet);
+        scene.add(bullet);
 
+    }
+}
+
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+
+function killTeacher() {
+    for (var x = 0; x < bullets.length; x++) {
+        if (bullets[x] === undefined) continue;
+        if (bullets[x].alive == false) {
+            bullets.splice(x, 1);
+            continue;
+        }
+
+        var demo = new THREE.Raycaster(bullets[x].position, controls.getObject().position, 0, 1);
+
+        var intersectElements = demo.intersectObjects(killerList, true);
+        if (intersectElements.length != 0) {
+            bullets[x].position.add(bullets[x].velocity);
+            for (var k = 0; k < intersectElements.length; k++) {
+                scene.remove(intersectElements[k].object);
+            }
+            bullets[x].alive = false;
+            scene.remove(bullets[x]);
+        } else {
+            bullets[x].position.add(bullets[x].velocity);
         }
     }
+}
+
+init();
+
+animate();
 
 
-    function onWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    }
+function animate() {
 
 
-    function killTeacher() {
-        for (var x = 0; x < bullets.length; x++) {
-            if (bullets[x] === undefined) continue;
-            if (bullets[x].alive == false) {
-                bullets.splice(x, 1);
-                continue;
-            }
 
-            var demo = new THREE.Raycaster(bullets[x].position, controls.getObject().position, 0, 1);
+    if (controlsEnabled === true) {
 
-            var intersectElements = demo.intersectObjects(killerList, true);
-            if (intersectElements.length != 0) {
-                bullets[x].position.add(bullets[x].velocity);
-                console.log(intersectElements[0]);
-                for (var k = 0; k < intersectElements.length; k++) {
-                    scene.remove(intersectElements[k].object);
-                }
-                bullets[x].alive = false;
-                scene.remove(bullets[x]);
-            } else {
-                bullets[x].position.add(bullets[x].velocity);
-            }
-        }
-    }
-
-    init();
-    animate();
-
-
-    function animate() {
-        requestAnimationFrame(animate);
-
-
-        if (controlsEnabled === true) {
-            raycaster.ray.origin.copy(controls.getObject().position);
-            raycaster.ray.origin.y -= 1;
-            var intersections = raycaster.intersectObjects(objects);
+        killTeacher();
+        for (var x = 0; x < objects.length; x++) {
+            var raycaster = new THREE.Raycaster(objects[x].position, camera.position, 0, 1);
+            var intersections = raycaster.intersectObjects(objects, true);
             var onObject = intersections.length > 0;
             var time = performance.now();
             var delta = (time - prevTime) / 1000;
@@ -803,10 +803,11 @@ function init() {
                 direction.normalize(); // this ensures consistent movements in all directions
                 if (moveForward || moveBackward) velocity.z -= direction.z * 400.0 * delta;
                 if (moveLeft || moveRight) velocity.x -= direction.x * 400.0 * delta;
+                controls.getObject().translateX(velocity.x * delta);
+                controls.getObject().translateY(velocity.y * delta);
+                controls.getObject().translateZ(velocity.z * delta);
             }
-            controls.getObject().translateX(velocity.x * delta);
-            controls.getObject().translateY(velocity.y * delta);
-            controls.getObject().translateZ(velocity.z * delta);
+
             if (controls.getObject().position.y < 1) {
                 velocity.y = 0;
                 controls.getObject().position.y = 1;
@@ -814,9 +815,12 @@ function init() {
             }
             prevTime = time;
 
-            killTeacher();
         }
-        renderer.render(scene, camera);
     }
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+}
 
-    document.addEventListener('mousedown', mouseClick, false);
+
+document.addEventListener('mousedown', mouseClick, false);
+
